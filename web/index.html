@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Catálogo de Demos</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 24px; }
+    header { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; }
+    input, select { padding: 8px; font-size: 14px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 10px; border-bottom: 1px solid #eee; vertical-align: top; }
+    .pill { padding: 2px 8px; border-radius: 999px; border: 1px solid #ddd; font-size: 12px; display: inline-block; margin-right: 6px; }
+    .muted { color: #666; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <h1>Catálogo de Demos</h1>
+  <p class="muted">Fuente: <code>../catalog.json</code></p>
+
+  <header>
+    <input id="q" placeholder="Buscar (id, nombre, categoría)..." size="35" />
+    <select id="status">
+      <option value="">Status (todos)</option>
+      <option>raw</option>
+      <option>local-ok</option>
+      <option>demo-ready</option>
+      <option>retired</option>
+    </select>
+    <select id="priority">
+      <option value="">Priority (todas)</option>
+      <option>nn</option>
+      <option>sales</option>
+      <option>internal</option>
+      <option>low</option>
+    </select>
+  </header>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Demo</th>
+        <th>Categorías</th>
+        <th>Status</th>
+        <th>Priority</th>
+        <th>Modo</th>
+        <th>Notas</th>
+      </tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+  <script>
+    async function load() {
+      const res = await fetch('../catalog.json', { cache: 'no-store' });
+      const data = await res.json();
+      return data.demos || [];
+    }
+
+    function pill(text) {
+      const span = document.createElement('span');
+      span.className = 'pill';
+      span.textContent = text;
+      return span;
+    }
+
+    function render(demos) {
+      const q = document.getElementById('q').value.toLowerCase().trim();
+      const status = document.getElementById('status').value;
+      const priority = document.getElementById('priority').value;
+
+      const filtered = demos.filter(d => {
+        const hay = `${d.id} ${d.name} ${(d.category||[]).join(' ')}`.toLowerCase();
+        if (q && !hay.includes(q)) return false;
+        if (status && d.status !== status) return false;
+        if (priority && d.priority !== priority) return false;
+        return true;
+      });
+
+      const tbody = document.getElementById('rows');
+      tbody.innerHTML = '';
+
+      for (const d of filtered) {
+        const tr = document.createElement('tr');
+
+        const td0 = document.createElement('td');
+        td0.innerHTML = `<b>${d.name || d.id}</b><div class="muted"><code>${d.id}</code></div>`;
+        tr.appendChild(td0);
+
+        const td1 = document.createElement('td');
+        (d.category || []).forEach(c => td1.appendChild(pill(c)));
+        tr.appendChild(td1);
+
+        const td2 = document.createElement('td'); td2.appendChild(pill(d.status || 'raw')); tr.appendChild(td2);
+        const td3 = document.createElement('td'); td3.appendChild(pill(d.priority || '')); tr.appendChild(td3);
+        const td4 = document.createElement('td'); td4.appendChild(pill(d.demo_mode || '')); tr.appendChild(td4);
+
+        const td5 = document.createElement('td');
+        td5.textContent = (d.setup && d.setup.notes) ? d.setup.notes : (d.notes || '');
+        tr.appendChild(td5);
+
+        tbody.appendChild(tr);
+      }
+    }
+
+    (async () => {
+      const demos = await load();
+      ['q','status','priority'].forEach(id => document.getElementById(id).addEventListener('input', () => render(demos)));
+      render(demos);
+    })();
+  </script>
+</body>
+</html>

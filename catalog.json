@@ -1,0 +1,46 @@
+{
+  "version": "1.0",
+  "updated_at": "TBD",
+  "demos": [
+    {
+      "id": "context-chat-accumulation",
+      "name": "Chat de acumulación de contexto",
+      "category": ["context"],
+      "status": "raw",
+      "priority": "nn",
+      "demo_mode": "live"
+    },
+    {
+      "id": "rfp-generator",
+      "name": "Generador de RFPs",
+      "category": ["generator", "context"],
+      "status": "raw",
+      "priority": "nn",
+      "demo_mode": "pregenerated"
+    },
+    {
+      "id": "telegram-datalake-chatbot",
+      "name": "Chatbot Telegram sobre Data Lake",
+      "category": ["data", "context"],
+      "status": "raw",
+      "priority": "nn",
+      "demo_mode": "live"
+    },
+    {
+      "id": "software-factory",
+      "name": "Fábrica de software",
+      "category": ["factory"],
+      "status": "raw",
+      "priority": "sales",
+      "demo_mode": "live"
+    },
+    {
+      "id": "corporate-context-manager",
+      "name": "Gestor de contextos corporativos",
+      "category": ["context"],
+      "status": "raw",
+      "priority": "sales",
+      "demo_mode": "live"
+    }
+  ]
+}
